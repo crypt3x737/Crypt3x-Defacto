@@ -1,0 +1,14 @@
+﻿<Page x:Class="Crypt3x_defacto.DumpLSASS"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" d:DesignHeight="500" d:DesignWidth="400"
+      Title="DumpLSASS" Style="{DynamicResource DumpLSASSPage}">
+    <DockPanel>
+        <Button x:Name="start_button" Click="start_button_Click" Content="Dump LSASS" DockPanel.Dock="Top" HorizontalAlignment="Left"/>
+        <TextBlock Margin="0,16,0,0" Text="This will probably only work if you're running this as an administrator."/>
+        <TextBlock Margin="0,8,0,0" Text="The output file will look something like 'lsass.exe-nnnnnn-nnnnnn.dmp'."/>
+        <TextBlock x:Name="status" Margin="0,16,0,0"/>
+    </DockPanel>
+</Page>

@@ -1,0 +1,27 @@
+﻿<Application x:Class="Crypt3x_defacto.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+
+    <!--
+        Don't actually put any styles here. This is just a
+        place to declare x:Key's so Visual Studio doesn't
+        complain about them not existing.
+    -->
+    <Application.Resources>
+        <ResourceDictionary>
+            <Style x:Key="MainWindow" TargetType="Window"/>
+                <Style x:Key="TitleBarStyle" TargetType="Border"/>
+                <Style x:Key="TabPanelStyle" TargetType="DockPanel"/>
+            <Style x:Key="SystemInfoPage" TargetType="Page"/>
+                <Style x:Key="SystemInfoLabel" TargetType="TextBlock"/>
+            <Style x:Key="FileFinderPage" TargetType="Page"/>
+            <Style x:Key="NetworkEnumerationPage" TargetType="Page"/>
+                <Style x:Key="StatusBlock" TargetType="TextBlock"/>
+            <Style x:Key="PasswordSprayingPage" TargetType="Page"/>
+            <Style x:Key="UserInfoPage" TargetType="Page"/>
+                <Style x:Key="ImpersonationTree" TargetType="ScrollViewer"/>
+            <Style x:Key="DumpLSASSPage" TargetType="Page"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

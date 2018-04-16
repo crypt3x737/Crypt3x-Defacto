@@ -1,0 +1,58 @@
+﻿<Window x:Class="Crypt3x_defacto.Tabs.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Crypt3x Defacto" WindowStartupLocation="CenterScreen"
+        Style="{DynamicResource MainWindow}">
+
+    <Border BorderThickness="1">
+        <DockPanel>
+            <Border Style="{DynamicResource TitleBarStyle}" MouseDown="title_bar_MouseDown">
+                <DockPanel>
+                    <Image x:Name="bhis"/>
+                    <TextBlock Text="Crypt3x Defacto"/>
+                    <Button x:Name="close_btn" Click="close_btn_Click" Content="⨯"/>
+                    <Button x:Name="minimize_btn" Click="minimize_btn_Click" Content="–"/>
+                </DockPanel>
+            </Border>
+            <DockPanel x:Name="tab_panel" Style="{DynamicResource TabPanelStyle}" LastChildFill="False">
+                <Border x:Name="start_tab" Tag="{Binding systemInfo}">
+                    <StackPanel>
+                        <Image Source="/Resources/system.png"/>
+                        <Label Content="System Info"/>
+                    </StackPanel>
+                </Border>
+                <Border Tag="{Binding fileFinder}">
+                    <StackPanel>
+                        <Image Source="/Resources/file.png"/>
+                        <Label Content="File Finder"/>
+                    </StackPanel>
+                </Border>
+                <Border Tag="{Binding networkEnumerator}">
+                    <StackPanel>
+                        <Image Source="/Resources/network.png"/>
+                        <Label Content="Network Enumerator"/>
+                    </StackPanel>
+                </Border>
+                <Border Tag="{Binding passwordSprayer}">
+                    <StackPanel>
+                        <Image Source="/Resources/hacker.png"/>
+                        <Label Content="Password Spraying"/>
+                    </StackPanel>
+                </Border>
+                <Border Tag="{Binding userInfo}">
+                    <StackPanel>
+                        <Image Source="/Resources/account.png"/>
+                        <Label Content="User Info"/>
+                    </StackPanel>
+                </Border>
+                <Border Tag="{Binding dumpLSASS}">
+                    <StackPanel>
+                        <Image Source="/Resources/service.png"/>
+                        <Label Content="Dump LSASS"/>
+                    </StackPanel>
+                </Border>
+            </DockPanel>
+            <Frame x:Name="main_frame"/>
+        </DockPanel>
+    </Border>
+</Window>
