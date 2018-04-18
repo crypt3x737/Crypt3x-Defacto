@@ -6,37 +6,37 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Windows.Media;
 
 namespace Helper {
-	struct Functions {
-		// runs a cmd command and returns the output as list of strings
-		public static IEnumerable<string> runCMD(string command, string arguments) {
-			var p = new Process();
+    struct Functions {
+        // runs a cmd command and returns the output as list of strings
+        public static IEnumerable<string> runCMD(string command, string arguments) {
+            var p = new Process();
 
-			p.StartInfo.CreateNoWindow = true;
-			p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			p.StartInfo.UseShellExecute = false;
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            p.StartInfo.UseShellExecute = false;
 
-			p.StartInfo.RedirectStandardOutput = true;
-			p.StartInfo.RedirectStandardError = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
 
-			p.StartInfo.FileName = command;
-			p.StartInfo.Arguments = arguments;
+            p.StartInfo.FileName = command;
+            p.StartInfo.Arguments = arguments;
 
-			var output = new List<string>();
-			p.OutputDataReceived += (sender, args) => { if (args.Data != null) output.Add(args.Data); };
+            var output = new List<string>();
+            p.OutputDataReceived += (sender, args) => { if (args.Data != null) output.Add(args.Data); };
 
-			try {
-				p.Start();
-				p.BeginOutputReadLine();
-				p.WaitForExit();
-			} catch (Win32Exception e) {
-				if (e.NativeErrorCode == 2)
-					System.Windows.Forms.MessageBox.Show("The '" + command + "' executable/command was not found.");
-				else
-					System.Windows.Forms.MessageBox.Show(e.Message);
-			}
+            try {
+                p.Start();
+                p.BeginOutputReadLine();
+                p.WaitForExit();
+            } catch (Win32Exception e) {
+                if (e.NativeErrorCode == 2)
+                    System.Windows.Forms.MessageBox.Show("The '" + command + "' executable/command was not found.");
+                else
+                    System.Windows.Forms.MessageBox.Show(e.Message);
+            }
 
-			return output;
-		}
+            return output;
+        }
 
         // gets all Active Directory computer objects in the current forest
         public static IEnumerable<ComputerPrincipal> getADComputers() {

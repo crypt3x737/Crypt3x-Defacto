@@ -4,7 +4,7 @@
     <!-- Colors -->
 
     <SolidColorBrush x:Key="TitleBarBackgroundColor" Color="#232B3E"/>
-    
+
     <SolidColorBrush x:Key="TabButtonBackgroundSelected" Color="Black"/>
     <SolidColorBrush x:Key="TabButtonBackgroundUnselected" Color="#2D364C"/>
     <SolidColorBrush x:Key="TabButtonBackgroundHover" Color="Black"/>
@@ -14,7 +14,7 @@
     <SolidColorBrush x:Key="TabButtonTextHover" Color="White"/>
 
     <SolidColorBrush x:Key="MainFrameBackgroundColor" Color="#353F59"/>
-    
+
     <SolidColorBrush x:Key="CurrentUserImpersonationNodeBackground" Color="#0A0295"/>
     <SolidColorBrush x:Key="CurrentUserImpersonationNodeBackgroundHover" Color="Purple"/>
 
@@ -42,9 +42,9 @@
                 <Setter Property="DockPanel.Dock" Value="Top"/>
                 <Style.Resources>
                     <Style TargetType="Image">
+                        <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="Height" Value="42"/>
                         <Setter Property="Source" Value="/Resources/bhis_small.png"/>
-                        <Setter Property="Margin" Value="0,0,28,0"/>
                     </Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="FontSize" Value="20"/>
@@ -52,6 +52,7 @@
                         <Setter Property="VerticalAlignment" Value="Center"/>
                     </Style>
                     <Style TargetType="Button">
+                        <Setter Property="Cursor" Value="Hand"/>
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="Foreground" Value="Gray"/>
                         <Setter Property="FontWeight" Value="Bold"/>
@@ -63,6 +64,7 @@
                     </Style>
                 </Style.Resources>
             </Style>
+
             <Style x:Key="TabPanelStyle" TargetType="DockPanel">
                 <Style.Resources>
                     <Style TargetType="Border">
@@ -110,8 +112,8 @@
     </Style>
 
     <Style TargetType="Button" BasedOn="{StaticResource ButtonStyle}"/>
-    
-    
+
+
     <!-- Page Styles -->
 
     <Style x:Key="SystemInfoPage" TargetType="Page" BasedOn="{StaticResource PageStyle}">
@@ -197,6 +199,85 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="Margin" Value="0,0,32,0"/>
+            </Style>
+            <Style TargetType="ListBoxItem">
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="Padding" Value="4,1"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="FocusVisualStyle">
+                    <Setter.Value>
+                        <Style>
+                            <Setter Property="Control.Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Rectangle
+                                            Margin="2"
+                                            SnapsToDevicePixels="True"
+                                            Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                                            StrokeDashArray="1 2"
+                                            StrokeThickness="1"
+                                        />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsMouseOver" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="Bd" Property="Background" Value="#1F26A0DA"/>
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#A826A0DA"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                        <Condition Property="IsSelected" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="Bd" Property="Background" Value="#3DDADADA"/>
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#FFDADADA"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                                        <Condition Property="IsSelected" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="Bd" Property="Background" Value="#3D26A0DA"/>
+                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#FF26A0DA"/>
+                                </MultiTrigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="DataGrid">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="FontFamily" Value="Calibri"/>
+                <Setter Property="FontSize" Value="14"/>
             </Style>
         </Style.Resources>
     </Style>

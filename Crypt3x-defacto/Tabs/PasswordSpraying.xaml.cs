@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace Crypt3x_defacto {
     /// <summary>
@@ -108,14 +108,19 @@ namespace Crypt3x_defacto {
             if (dlg.ShowDialog() == DialogResult.OK) {
                 var file = dlg.FileName;
                 loadTxt.Text = file;
-                try { pass = File.ReadAllLines(file).ToList(); }
-                catch (IOException) {}
+                try { pass = File.ReadAllLines(file).ToList(); } catch (IOException) { }
             }
         }
 
         async private void start_btn_Click(object sender, RoutedEventArgs e) {
+            authenticated_users.Clear();
+            authenticated_grid.ItemsSource = null;
+            authenticated_grid.Items.Clear();
+            authenticated_grid.Items.Refresh();
+
             int account, password_length;
-            Int32.TryParse(PolicyObj.length, out password_length);
+            if (int.TryParse(PolicyObj.length, out password_length)) {
+            } else password_length = 0;
             if (int.TryParse(PolicyObj.threshold, out account)) {
             } else account = 0;
 
@@ -123,8 +128,7 @@ namespace Crypt3x_defacto {
                 start_btn.IsEnabled = false;
                 get_spray_users();
                 foreach (var p in pass) {
-                    if(p.Length>=password_length)
-                    {
+                    if (p.Length >= password_length) {
                         --account;
                         foreach (var u in spray_users)
                             await Task.Run(() => signIn(u.name, p));
@@ -160,14 +164,16 @@ namespace Crypt3x_defacto {
                 status.Text = "Trying password: " + p + " on username: " + u;
             });
 
-            using (var pc = new PrincipalContext(ContextType.Domain, Environment.UserDomainName)) {
+            using (var pc = new PrincipalContext(ContextType.Domain, Info.UserDomainName)) {
                 if (pc.ValidateCredentials(u, p)) {
                     authenticated_users.Add(new UserCredentials {
                         Password = p,
                         Username = u
                     });
                     Dispatcher.Invoke(() => {
+                        Info.page.addChildToImpersonationTree(u, Info.UserDomainName, p);
                         authenticated_grid.ItemsSource = authenticated_users;
+                        authenticated_grid.Items.Refresh();
                     });
                 }
             }
@@ -177,12 +183,14 @@ namespace Crypt3x_defacto {
             listBox1.Items.Clear();
             listBox2.Items.Clear();
             listBox1.Items.Add("All Users");
-            foreach (var u in ADusers)
-                if (listBox0.SelectedItem.Equals(u.domain))
-                    domain_groups.Add(u.domain_group);
-            foreach (var s in domain_groups)
-                listBox1.Items.Add(s);
-            domain_groups.Clear();
+            try {
+                foreach (var u in ADusers)
+                    if (listBox0.SelectedItem.Equals(u.domain))
+                        domain_groups.Add(u.domain_group);
+                foreach (var s in domain_groups)
+                    listBox1.Items.Add(s);
+                domain_groups.Clear();
+            } catch { }
         }
 
         private void listBox1_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
@@ -217,6 +225,13 @@ namespace Crypt3x_defacto {
                     IsSelected = true
                 });
             }
+        }
+
+        private void authenticated_grid_LoadingRow(object sender, DataGridRowEventArgs e) {
+            try {
+                e.Row.Background = Helper.Functions.SolidColorBrushFromHex("#0CB754");
+                e.Row.Foreground = new SolidColorBrush(Colors.White);
+            } catch { }
         }
     }
 }

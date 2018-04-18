@@ -8,10 +8,11 @@
         <DockPanel>
             <Border Style="{DynamicResource TitleBarStyle}" MouseDown="title_bar_MouseDown">
                 <DockPanel>
-                    <Image x:Name="bhis"/>
-                    <TextBlock Text="Crypt3x Defacto"/>
+                    <Image x:Name="bhis_icon"/>
+                    <TextBlock Text="Crypt3x-Defacto"/>
                     <Button x:Name="close_btn" Click="close_btn_Click" Content="⨯"/>
                     <Button x:Name="minimize_btn" Click="minimize_btn_Click" Content="–"/>
+                    <Button x:Name="info_btn" Click="info_btn_Click" Content="?"/>
                 </DockPanel>
             </Border>
             <DockPanel x:Name="tab_panel" Style="{DynamicResource TabPanelStyle}" LastChildFill="False">

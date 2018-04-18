@@ -93,10 +93,11 @@ namespace Crypt3x_defacto {
             var watch = new Stopwatch();
             watch.Start();
 
-            // gets all the strings from the search text and puts it in the array search_term
+            // gets all the strings from the search text and puts it in the array - search_term
             search_terms = getSearchTerms();
 
             var path = fileText.Text;
+            //starts the file finder parallely
             if (path != file_path_text) {
                 if (Directory.Exists(path)) {
                     await Task.Run(() => get_files(path));
@@ -190,14 +191,14 @@ namespace Crypt3x_defacto {
                 foreach (var s in Directory.EnumerateFiles(path)) {
                     switch (Path.GetExtension(s)) {
                         case ".zip":
-                            read_zip(s);
+                            read_zip(s);//function to read zip files
                             break;
                         case ".iso":
-                            read_iso(s);
+                            read_iso(s);//function to read iso files
                             break;
                     }
 
-                    var fileName = s.Substring(path.Length + 1);
+                    var fileName = s.Substring(path.Length + 1);// gets the name of the file from the root path
                     foreach (var item in search_terms) {
                         if (fileName.ToLower().Contains(item)) {
                             file_list.Add(new File_Info(path,fileName));
@@ -218,7 +219,7 @@ namespace Crypt3x_defacto {
 
         // Function that reads compressed files like .zip without extracting them.
         public void read_zip(string path) {
-            var folders = new HashSet<string>();
+            var folders = new HashSet<string>(); //makes sure that we reject we don't have any repeated directories
             string folder;
             bool add;
 
@@ -227,8 +228,8 @@ namespace Crypt3x_defacto {
                     foreach (var entry in archive.Entries) {
                         // extracts the folder path inside the archive
                         folder = entry.FullName.ToString().Substring(0, entry.FullName.Length - entry.Name.Length).ToLower();
-                        foreach (var item in search_terms) {
-                            if (entry.Name.ToString().ToLower().Contains(item)) {
+                        foreach (var item in search_terms) { // looks for the search terms
+                            if (entry.Name.ToString().ToLower().Contains(item)) {//if found, add it to the file_list list
                                 file_list.Add(new File_Info(path + folder, entry.Name));
                                 break;
                             }
@@ -252,7 +253,7 @@ namespace Crypt3x_defacto {
             } catch { }
         }
 
-        // Function that reads .iso files without extracting the file.
+        // Function that reads all .iso files without extracting the file.
         public void read_iso(string iso) {
             using (var isoStream = File.Open(iso, FileMode.Open)) {
                 foreach (var item in search_terms) {

@@ -23,6 +23,11 @@ namespace Crypt3x_defacto.Tabs {
             Application.Current.Resources.Source = new Uri("/Themes/Default.xaml", UriKind.RelativeOrAbsolute);
             passwordSprayer.GetADUsers();
 
+            // add event handlers to the BHIS icon
+            bhis_icon.MouseLeftButtonDown += info_btn_Click;
+            bhis_icon.StylusDown += info_btn_Click;
+            bhis_icon.TouchDown += info_btn_Click;
+
             // add event handlers to tab switcher buttons
             foreach (Border tab in tab_panel.Children) {
                 tab.MouseLeftButtonDown += tab_button_Click;
@@ -78,6 +83,7 @@ namespace Crypt3x_defacto.Tabs {
 
         private void close_btn_Click(object sender, RoutedEventArgs e) => Close();
         private void minimize_btn_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+        private void info_btn_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start("https://www.blackhillsinfosec.com");
 
 
         private void title_bar_MouseDown(object sender, MouseButtonEventArgs e) {

@@ -228,6 +228,23 @@ namespace Crypt3x_defacto {
 		}
 
 
+        public void addChildToImpersonationTree(string name, string domain, string password) {
+            // Convert string password to SecureString securePass.
+            var securePass = new System.Net.NetworkCredential("", password).SecurePassword;
+
+            // Create new node.
+            var i = new iNode(name, domain, securePass, currentImpersonation.depth + 1);
+            i.parent = currentImpersonation;
+
+            // Add it as a child of the current node.
+            if (currentImpersonation.children == null)
+                currentImpersonation.children = new List<iNode>();
+            currentImpersonation.children.Add(i);
+
+            // Update the GUI.
+            updateImpersonationTreeGUI();
+        }
+
 		private async void signIn_Click(object sender, RoutedEventArgs e) {
 			signIn.IsEnabled = false;
 
