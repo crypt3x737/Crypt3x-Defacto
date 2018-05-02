@@ -14,27 +14,27 @@ namespace Crypt3x_defacto {
     /// <summary>
     /// Interaction logic for Info.xaml
     /// </summary>
-    public partial class Info : Page {
-		// A reference to the non-static page instance.
-		public static Info page;
+    public partial class SystemInfo : Page {
+        // A reference to the non-static page instance.
+        public static SystemInfo page;
 
-		// A set of ID's for functions that have called disableSignIn()
-		// (and have not yet called enableSignIn()). This is kept so that
-		// multiple functions can call those functions asyncronously, and
-		// sign-in will only be enabled when the set is empty.
-		private HashSet<int> SignInKeys = new HashSet<int>();
+        // A set of ID's for functions that have called disableSignIn()
+        // (and have not yet called enableSignIn()). This is kept so that
+        // multiple functions can call those functions asyncronously, and
+        // sign-in will only be enabled when the set is empty.
+        private HashSet<int> SignInKeys = new HashSet<int>();
 
         // Wrapper for Helper.UserImpersonator so it can be used as a node in a tree.
-        public class iNode : Helper.UserImpersonator {
+        private class iNode : Helper.UserImpersonator {
             public iNode parent;
             public List<iNode> children;
             public int depth;
             public iNode(string n, string d, SecureString p, int de) : base(n, d, p) { depth = de; }
         }
-        public static iNode impersonationTreeRoot, currentImpersonation;
+        private static iNode impersonationTreeRoot, currentImpersonation;
 
-		public static string UserName { get; private set; }
-		public static string UserDomainName { get; private set; }
+        public static string UserName { get; private set; }
+        public static string UserDomainName { get; private set; }
 
         // only for use in updateImpersonationTreeGUI
         private static Thickness borderRight = new Thickness(0, 0, 1, 0);
@@ -45,33 +45,33 @@ namespace Crypt3x_defacto {
         private static int nodeWidth = 200;
 
 
-        public Info() {
-			InitializeComponent();
-			page = this;
+        public SystemInfo() {
+            InitializeComponent();
+            page = this;
             UserName = Environment.UserName;
-			UserDomainName = Environment.UserDomainName;
+            UserDomainName = Environment.UserDomainName;
             impersonationTreeRoot = new iNode(UserName, UserDomainName, null, 0);
             currentImpersonation = impersonationTreeRoot;
             updateUserInfo();
             updateImpersonationTreeGUI();
         }
 
-		public bool ConnectedToAD() {
-			if (currentImpersonation.depth == 0) {
-				// Apparently this equals "NTLM" when you're not connected to anything.
-				// It can be other things as well, but I don't know what they are.
-				return WindowsIdentity.GetCurrent().AuthenticationType == "Kerberos";
-			} else {
-				// I don't think an impersonation would ever succeed if you weren't connected to Active Directory.
-				return true;
-			}
-		}
+        public bool ConnectedToAD() {
+            if (currentImpersonation.depth == 0) {
+                // Apparently this equals "NTLM" when you're not connected to anything.
+                // It can be other things as well, but I don't know what they are.
+                return WindowsIdentity.GetCurrent().AuthenticationType == "Kerberos";
+            } else {
+                // I don't think an impersonation would ever succeed if you weren't connected to Active Directory.
+                return true;
+            }
+        }
 
-		private void updateUserInfo() {
-			username.Text = UserName;
-			connected_to_ad.Text = ConnectedToAD() ? "Yes" : "No";
-			ad_domain.Text = UserDomainName;
-			signInDom.Text = UserDomainName;
+        private void updateUserInfo() {
+            username.Text = UserName;
+            connected_to_ad.Text = ConnectedToAD() ? "Yes" : "No";
+            ad_domain.Text = UserDomainName;
+            signInDom.Text = UserDomainName;
         }
 
         private void updateImpersonationTreeGUI() {
@@ -214,18 +214,18 @@ namespace Crypt3x_defacto {
         }
 
 
-		// Disables user sign-in. Uses the calling method's MetadataToken, obtained from the stack trace, as an identifier.
-		public void disableSignIn() {
-			SignInKeys.Add(new StackFrame(1).GetMethod().MetadataToken);
-			signIn.IsEnabled = false;
-		}
+        // Disables user sign-in. Uses the calling method's MetadataToken, obtained from the stack trace, as an identifier.
+        public void disableSignIn() {
+            SignInKeys.Add(new StackFrame(1).GetMethod().MetadataToken);
+            signIn.IsEnabled = false;
+        }
 
-		// Enables user sign-in. Uses the calling method's MetadataToken, obtained from the stack trace, as an identifier.
-		public void enableSignIn() {
-			SignInKeys.Remove(new StackFrame(1).GetMethod().MetadataToken);
-			if (SignInKeys.Count == 0)
-				signIn.IsEnabled = true;
-		}
+        // Enables user sign-in. Uses the calling method's MetadataToken, obtained from the stack trace, as an identifier.
+        public void enableSignIn() {
+            SignInKeys.Remove(new StackFrame(1).GetMethod().MetadataToken);
+            if (SignInKeys.Count == 0)
+                signIn.IsEnabled = true;
+        }
 
 
         public void addChildToImpersonationTree(string name, string domain, string password) {
@@ -245,17 +245,17 @@ namespace Crypt3x_defacto {
             updateImpersonationTreeGUI();
         }
 
-		private async void signIn_Click(object sender, RoutedEventArgs e) {
-			signIn.IsEnabled = false;
+        private async void signIn_Click(object sender, RoutedEventArgs e) {
+            signIn.IsEnabled = false;
 
-			var i = new iNode(signInUser.Text, signInDom.Text.ToUpper(), signInPass.SecurePassword, currentImpersonation.depth + 1);
+            var i = new iNode(signInUser.Text, signInDom.Text.ToUpper(), signInPass.SecurePassword, currentImpersonation.depth + 1);
 
-			if (await Task.Run((Func<bool>)i.start)) {
-				signInUser.Clear();
-				signInPass.Clear();
+            if (await Task.Run((Func<bool>)i.start)) {
+                signInUser.Clear();
+                signInPass.Clear();
 
-				UserName = i.name;
-				UserDomainName = i.domain;
+                UserName = i.name;
+                UserDomainName = i.domain;
 
                 i.parent = currentImpersonation;
                 if (currentImpersonation.children == null)
@@ -267,12 +267,12 @@ namespace Crypt3x_defacto {
                 updateImpersonationTreeGUI();
             }
 
-			signIn.IsEnabled = true;
-		}
+            signIn.IsEnabled = true;
+        }
 
-		// Select the input when it is clicked or focused.
-		private void signInUserDom_ClickFocus(object sender, RoutedEventArgs e) => (sender as TextBox).SelectAll();
-		private void signInPass_ClickFocus(object sender, RoutedEventArgs e) => (sender as PasswordBox).SelectAll();
+        // Select the input when it is clicked or focused.
+        private void signInUserDom_ClickFocus(object sender, RoutedEventArgs e) => (sender as TextBox).SelectAll();
+        private void signInPass_ClickFocus(object sender, RoutedEventArgs e) => (sender as PasswordBox).SelectAll();
 
 
         // when a node in the impersonation tree is clicked
@@ -341,8 +341,8 @@ namespace Crypt3x_defacto {
 
         // Sign-in when the Enter key is pressed.
         private void signIn_KeyDown(object sender, KeyEventArgs e) {
-			if (e.Key == Key.Enter)
-				signIn_Click(sender, e);
-		}
-	}
+            if (e.Key == Key.Enter)
+                signIn_Click(sender, e);
+        }
+    }
 }

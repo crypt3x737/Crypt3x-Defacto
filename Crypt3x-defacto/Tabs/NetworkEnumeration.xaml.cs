@@ -33,7 +33,7 @@ namespace Crypt3x_defacto {
         
         async private void button_Click(object _, RoutedEventArgs __) {
             // disable the start button so it can't be clicked again until this function ends
-            Info.page.disableSignIn();
+            SystemInfo.page.disableSignIn();
             start_button.IsEnabled = false;
 
             status.Text = "Finding devices on the network...";
@@ -65,7 +65,7 @@ namespace Crypt3x_defacto {
             drive_list.ItemsSource = drives;
 
             // re-enable the start button
-            Info.page.enableSignIn();
+            SystemInfo.page.enableSignIn();
             start_button.IsEnabled = true;
         }
         

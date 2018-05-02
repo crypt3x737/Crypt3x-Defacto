@@ -125,6 +125,7 @@ namespace Crypt3x_defacto {
             } else account = 0;
 
             try {
+                SystemInfo.page.disableSignIn();
                 start_btn.IsEnabled = false;
                 get_spray_users();
                 foreach (var p in pass) {
@@ -140,6 +141,7 @@ namespace Crypt3x_defacto {
                 authenticated_grid.ItemsSource = authenticated_users;
                 status.Text = "Spray Completed";
                 start_btn.IsEnabled = true;
+                SystemInfo.page.enableSignIn();
             } catch { }
         }
 
@@ -164,14 +166,14 @@ namespace Crypt3x_defacto {
                 status.Text = "Trying password: " + p + " on username: " + u;
             });
 
-            using (var pc = new PrincipalContext(ContextType.Domain, Info.UserDomainName)) {
+            using (var pc = new PrincipalContext(ContextType.Domain, SystemInfo.UserDomainName)) {
                 if (pc.ValidateCredentials(u, p)) {
                     authenticated_users.Add(new UserCredentials {
                         Password = p,
                         Username = u
                     });
                     Dispatcher.Invoke(() => {
-                        Info.page.addChildToImpersonationTree(u, Info.UserDomainName, p);
+                        SystemInfo.page.addChildToImpersonationTree(u, SystemInfo.UserDomainName, p);
                         authenticated_grid.ItemsSource = authenticated_users;
                         authenticated_grid.Items.Refresh();
                     });

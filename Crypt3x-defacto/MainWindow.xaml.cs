@@ -8,7 +8,7 @@ namespace Crypt3x_defacto.Tabs {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        public Info systemInfo { get; } = new Info();
+        public SystemInfo systemInfo { get; } = new SystemInfo();
         public FileFinder fileFinder { get; } = new FileFinder();
         public NetworkEnumeration networkEnumerator { get; } = new NetworkEnumeration();
         public PasswordSpraying passwordSprayer { get; } = new PasswordSpraying();
