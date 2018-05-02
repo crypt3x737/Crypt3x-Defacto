@@ -10,11 +10,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace Crypt3x_defacto {
+namespace Crypt3x_defacto
+{
     /// <summary>
     /// Interaction logic for Info.xaml
     /// </summary>
-    public partial class SystemInfo : Page {
+    public partial class SystemInfo : Page
+    {
         // A reference to the non-static page instance.
         public static SystemInfo page;
 
@@ -25,7 +27,8 @@ namespace Crypt3x_defacto {
         private HashSet<int> SignInKeys = new HashSet<int>();
 
         // Wrapper for Helper.UserImpersonator so it can be used as a node in a tree.
-        private class iNode : Helper.UserImpersonator {
+        private class iNode : Helper.UserImpersonator
+        {
             public iNode parent;
             public List<iNode> children;
             public int depth;
@@ -45,7 +48,8 @@ namespace Crypt3x_defacto {
         private static int nodeWidth = 200;
 
 
-        public SystemInfo() {
+        public SystemInfo()
+        {
             InitializeComponent();
             page = this;
             UserName = Environment.UserName;
@@ -56,30 +60,37 @@ namespace Crypt3x_defacto {
             updateImpersonationTreeGUI();
         }
 
-        public bool ConnectedToAD() {
-            if (currentImpersonation.depth == 0) {
+        public bool ConnectedToAD()
+        {
+            if (currentImpersonation.depth == 0)
+            {
                 // Apparently this equals "NTLM" when you're not connected to anything.
                 // It can be other things as well, but I don't know what they are.
                 return WindowsIdentity.GetCurrent().AuthenticationType == "Kerberos";
-            } else {
+            }
+            else {
                 // I don't think an impersonation would ever succeed if you weren't connected to Active Directory.
                 return true;
             }
         }
 
-        private void updateUserInfo() {
+        private void updateUserInfo()
+        {
             username.Text = UserName;
             connected_to_ad.Text = ConnectedToAD() ? "Yes" : "No";
             ad_domain.Text = UserDomainName;
             signInDom.Text = UserDomainName;
         }
 
-        private void updateImpersonationTreeGUI() {
+        private void updateImpersonationTreeGUI()
+        {
             impersonationTree.Content = updateImpersonationTreeGUI(impersonationTreeRoot);
         }
-        private FrameworkElement updateImpersonationTreeGUI(iNode node) {
+        private FrameworkElement updateImpersonationTreeGUI(iNode node)
+        {
             // add user info box
-            var b = new Border {
+            var b = new Border
+            {
                 Background = Brushes.Transparent,
                 Margin = nodeMargin,
                 Width = nodeWidth
@@ -105,9 +116,9 @@ namespace Crypt3x_defacto {
             b.Tag = node;
 
             // add the user data
-            var dataContainer = new StackPanel{Orientation = Orientation.Vertical};
-            dataContainer.Children.Add(new TextBlock{Text = node.name});
-            dataContainer.Children.Add(new TextBlock{Text = node.domain});
+            var dataContainer = new StackPanel { Orientation = Orientation.Vertical };
+            dataContainer.Children.Add(new TextBlock { Text = node.name });
+            dataContainer.Children.Add(new TextBlock { Text = node.domain });
             b.Child = dataContainer;
 
             // if there are no children, return this
@@ -142,16 +153,17 @@ namespace Crypt3x_defacto {
             var grid = new Grid();
 
             // add rows
-            grid.RowDefinitions.Add(new RowDefinition{Height = GridLength.Auto});
-            grid.RowDefinitions.Add(new RowDefinition{Height = GridLength.Auto});
-            grid.RowDefinitions.Add(new RowDefinition{Height = GridLength.Auto});
-            grid.RowDefinitions.Add(new RowDefinition{Height = GridLength.Auto});
-            grid.RowDefinitions.Add(new RowDefinition{Height = GridLength.Auto});
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
             // add columns
-            for (var i = 0; i < ccount; ++i) {
-                grid.ColumnDefinitions.Add(new ColumnDefinition{Width = GridLength.Auto});
-                grid.ColumnDefinitions.Add(new ColumnDefinition{Width = GridLength.Auto});
+            for (var i = 0; i < ccount; ++i)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             }
 
             // add parent
@@ -161,48 +173,51 @@ namespace Crypt3x_defacto {
             grid.Children.Add(b);
 
             // add vertical line from parent
-            var fromParent = new Rectangle{Width = 2, Height = verticalLineHeight};
+            var fromParent = new Rectangle { Width = 2, Height = verticalLineHeight };
             Grid.SetRow(fromParent, 1);
             Grid.SetColumn(fromParent, 0);
             Grid.SetColumnSpan(fromParent, ccount * 2);
             grid.Children.Add(fromParent);
 
             // add horizontal line
-            var leftBorder = new Border{BorderThickness = borderRight, Height = 2};
+            var leftBorder = new Border { BorderThickness = borderRight, Height = 2 };
             Grid.SetRow(leftBorder, 2);
             Grid.SetColumn(leftBorder, 0);
             grid.Children.Add(leftBorder);
-            if (ccount > 1) {
+            if (ccount > 1)
+            {
                 var column = new Rectangle();
                 Grid.SetRow(column, 2);
                 Grid.SetColumn(column, 1);
                 Grid.SetColumnSpan(column, 2 * ccount - 2);
                 grid.Children.Add(column);
             }
-            var rightBorder = new Border{BorderThickness = borderLeft, Height = 2};
+            var rightBorder = new Border { BorderThickness = borderLeft, Height = 2 };
             Grid.SetRow(rightBorder, 2);
             Grid.SetColumn(rightBorder, 2 * ccount - 1);
             grid.Children.Add(rightBorder);
 
             // add vertical lines to children
-            leftBorder = new Border{BorderThickness = borderRight, Height = verticalLineHeight};
+            leftBorder = new Border { BorderThickness = borderRight, Height = verticalLineHeight };
             Grid.SetRow(leftBorder, 3);
             Grid.SetColumn(leftBorder, 0);
             grid.Children.Add(leftBorder);
-            for (var i = 1; ccount > 1 && i <= ccount; i += 2) {
-                var leftRightBorder = new Border{BorderThickness = borderLeftRight, Height = verticalLineHeight};
+            for (var i = 1; ccount > 1 && i <= ccount; i += 2)
+            {
+                var leftRightBorder = new Border { BorderThickness = borderLeftRight, Height = verticalLineHeight };
                 Grid.SetRow(leftRightBorder, 3);
                 Grid.SetColumn(leftRightBorder, i);
                 Grid.SetColumnSpan(leftRightBorder, 2);
                 grid.Children.Add(leftRightBorder);
             }
-            rightBorder = new Border{BorderThickness = borderLeft, Height = verticalLineHeight};
+            rightBorder = new Border { BorderThickness = borderLeft, Height = verticalLineHeight };
             Grid.SetRow(rightBorder, 3);
             Grid.SetColumn(rightBorder, 2 * ccount - 1);
             grid.Children.Add(rightBorder);
 
             // recursively add children
-            for (var i = 0; i < ccount; ++i) {
+            for (var i = 0; i < ccount; ++i)
+            {
                 var child = updateImpersonationTreeGUI(node.children[i]);
                 Grid.SetRow(child, 4);
                 Grid.SetColumn(child, i * 2);
@@ -215,20 +230,23 @@ namespace Crypt3x_defacto {
 
 
         // Disables user sign-in. Uses the calling method's MetadataToken, obtained from the stack trace, as an identifier.
-        public void disableSignIn() {
+        public void disableSignIn()
+        {
             SignInKeys.Add(new StackFrame(1).GetMethod().MetadataToken);
             signIn.IsEnabled = false;
         }
 
         // Enables user sign-in. Uses the calling method's MetadataToken, obtained from the stack trace, as an identifier.
-        public void enableSignIn() {
+        public void enableSignIn()
+        {
             SignInKeys.Remove(new StackFrame(1).GetMethod().MetadataToken);
             if (SignInKeys.Count == 0)
                 signIn.IsEnabled = true;
         }
 
 
-        public void addChildToImpersonationTree(string name, string domain, string password) {
+        public void addChildToImpersonationTree(string name, string domain, string password)
+        {
             // Convert string password to SecureString securePass.
             var securePass = new System.Net.NetworkCredential("", password).SecurePassword;
 
@@ -245,12 +263,14 @@ namespace Crypt3x_defacto {
             updateImpersonationTreeGUI();
         }
 
-        private async void signIn_Click(object sender, RoutedEventArgs e) {
+        private async void signIn_Click(object sender, RoutedEventArgs e)
+        {
             signIn.IsEnabled = false;
 
             var i = new iNode(signInUser.Text, signInDom.Text.ToUpper(), signInPass.SecurePassword, currentImpersonation.depth + 1);
 
-            if (await Task.Run((Func<bool>)i.start)) {
+            if (await Task.Run((Func<bool>)i.start))
+            {
                 signInUser.Clear();
                 signInPass.Clear();
 
@@ -276,12 +296,14 @@ namespace Crypt3x_defacto {
 
 
         // when a node in the impersonation tree is clicked
-        private void iNodeClick(object sender, RoutedEventArgs e) {
+        private void iNodeClick(object sender, RoutedEventArgs e)
+        {
             var targetNode = (iNode)((Border)sender).Tag;
 
             // if the node that was clicked isn't the current impersonation,
             // make it the current impersonation
-            if (targetNode != currentImpersonation) {
+            if (targetNode != currentImpersonation)
+            {
                 // an alias
                 var currNode = currentImpersonation;
 
@@ -290,20 +312,23 @@ namespace Crypt3x_defacto {
 
                 // move the target up the tree
                 // keeping track of the path to the true target
-                while (targetNode.depth > currNode.depth) {
+                while (targetNode.depth > currNode.depth)
+                {
                     path.Push(targetNode);
                     targetNode = targetNode.parent;
                 }
 
                 // move the current node up the tree
-                while (currNode.depth > targetNode.depth) {
+                while (currNode.depth > targetNode.depth)
+                {
                     currNode.stop();
                     currNode = currNode.parent;
                     currentImpersonation = currNode;
                 }
 
                 // move both up the tree until they meet
-                while (targetNode != currNode) {
+                while (targetNode != currNode)
+                {
                     path.Push(targetNode);
                     targetNode = targetNode.parent;
                     currNode.stop();
@@ -312,7 +337,8 @@ namespace Crypt3x_defacto {
                 }
 
                 // move down the tree to the target
-                while (path.Count > 0) {
+                while (path.Count > 0)
+                {
                     var next = path.Pop();
                     if (next.start())
                         currentImpersonation = next;
@@ -330,7 +356,8 @@ namespace Crypt3x_defacto {
 
         // when a node in the impersonation tree is hovered over
         private void iNodeHover(object sender, RoutedEventArgs e) => ((Border)sender).SetResourceReference(Border.BackgroundProperty, "CurrentUserImpersonationNodeBackgroundHover");
-        private void iNodeUnhover(object sender, RoutedEventArgs e) {
+        private void iNodeUnhover(object sender, RoutedEventArgs e)
+        {
             var b = (Border)sender;
             var node = (iNode)b.Tag;
             if (node == currentImpersonation)
@@ -340,7 +367,8 @@ namespace Crypt3x_defacto {
 
 
         // Sign-in when the Enter key is pressed.
-        private void signIn_KeyDown(object sender, KeyEventArgs e) {
+        private void signIn_KeyDown(object sender, KeyEventArgs e)
+        {
             if (e.Key == Key.Enter)
                 signIn_Click(sender, e);
         }

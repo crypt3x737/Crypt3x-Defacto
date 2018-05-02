@@ -3,11 +3,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Crypt3x_defacto.Tabs {
+namespace Crypt3x_defacto.Tabs
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : Window
+    {
         public SystemInfo systemInfo { get; } = new SystemInfo();
         public FileFinder fileFinder { get; } = new FileFinder();
         public NetworkEnumeration networkEnumerator { get; } = new NetworkEnumeration();
@@ -18,7 +20,8 @@ namespace Crypt3x_defacto.Tabs {
         private Page currentPage;
         private Border currentBorder;
 
-        public MainWindow() {
+        public MainWindow()
+        {
             InitializeComponent();
             Application.Current.Resources.Source = new Uri("/Themes/Default.xaml", UriKind.RelativeOrAbsolute);
             passwordSprayer.GetADUsers();
@@ -29,7 +32,8 @@ namespace Crypt3x_defacto.Tabs {
             bhis_icon.TouchDown += info_btn_Click;
 
             // add event handlers to tab switcher buttons
-            foreach (Border tab in tab_panel.Children) {
+            foreach (Border tab in tab_panel.Children)
+            {
                 tab.MouseLeftButtonDown += tab_button_Click;
                 tab.StylusDown += tab_button_Click;
                 tab.TouchDown += tab_button_Click;
@@ -49,7 +53,8 @@ namespace Crypt3x_defacto.Tabs {
         }
 
 
-        private void tab_button_Click(object sender, RoutedEventArgs e) {
+        private void tab_button_Click(object sender, RoutedEventArgs e)
+        {
             var b = (Border)sender;
             if (b == currentBorder) return;
             var page = (Page)b.Tag;
@@ -67,13 +72,15 @@ namespace Crypt3x_defacto.Tabs {
 
             currentBorder = b;
         }
-        private void tab_button_Hover(object sender, RoutedEventArgs e) {
+        private void tab_button_Hover(object sender, RoutedEventArgs e)
+        {
             var b = (Border)sender;
             var text = (Label)((StackPanel)b.Child).Children[1];
             b.SetResourceReference(BackgroundProperty, "TabButtonBackgroundHover");
             text.SetResourceReference(ForegroundProperty, "TabButtonTextHover");
         }
-        private void tab_button_Unhover(object sender, RoutedEventArgs e) {
+        private void tab_button_Unhover(object sender, RoutedEventArgs e)
+        {
             var b = (Border)sender;
             var text = (Label)((StackPanel)b.Child).Children[1];
             b.SetResourceReference(Border.BackgroundProperty, b.Tag == currentPage ? "TabButtonBackgroundSelected" : "TabButtonBackgroundUnselected");
@@ -86,7 +93,8 @@ namespace Crypt3x_defacto.Tabs {
         private void info_btn_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start("https://www.blackhillsinfosec.com");
 
 
-        private void title_bar_MouseDown(object sender, MouseButtonEventArgs e) {
+        private void title_bar_MouseDown(object sender, MouseButtonEventArgs e)
+        {
             if (e.ChangedButton == MouseButton.Left) DragMove();
         }
     }
