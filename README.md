@@ -1,3 +1,3 @@
 # Crypt3x-Defacto
 
-Screenshot - https://imgur.com/rHsJQw2
+![example image](https://i.imgur.com/VKJzjO3.png)
